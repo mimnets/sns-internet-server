@@ -10,19 +10,20 @@ require('dotenv').config();
 //cNu3qFlwOaCn7XFI
 
 app.use(cors());
-app.use(express.json()); 
+app.use(express.json());
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.ak6zw.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
-async function run(){
+async function run() {
 
-    try{
+    try {
 
         const customersCollection = client.db("snsInternet").collection("customers");
+        const billsCollection = client.db("snsInternet").collection("bills");
 
         // Show / Read Customers Start
-        app.get('/customers', async (req, res)=>{
+        app.get('/customers', async (req, res) => {
             const query = {};
             const customers = await customersCollection.find(query).toArray();
             res.send(customers);
@@ -38,12 +39,28 @@ async function run(){
         })
         // Add Customer End
 
+        // Show / Read Bills Start
+        app.get('/bills', async (req, res) => {
+            const query = {};
+            const bills = await billsCollection.find(query).toArray();
+            res.send(bills);
+        })
+        // Show / Read Bills End
+
+        // Add Bills Start
+        app.post('/bills', async (req, res) => {
+            const bill = req.body;
+            const result = await billsCollection.insertOne(bill);
+            res.send(result);
+        })
+        // Add Bills End
+
 
 
 
 
     }
-    finally{
+    finally {
 
     }
 
@@ -52,10 +69,10 @@ run().catch(error => console.error(error));
 
 
 
-app.get('/', async (req, res)=>{
+app.get('/', async (req, res) => {
     res.send('SNS Internet Server is running..');
 });
 
-app.listen(port, ()=> {
+app.listen(port, () => {
     console.log(`listening on port ${port}`);
 });
