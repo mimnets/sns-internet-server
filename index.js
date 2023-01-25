@@ -21,14 +21,22 @@ async function run(){
 
         const customersCollection = client.db("snsInternet").collection("customers");
 
+        // Show / Read Customers Start
+        app.get('/customers', async (req, res)=>{
+            const query = {};
+            const customers = await customersCollection.find(query).toArray();
+            res.send(customers);
+        })
+        // Show / Read Customers End
 
-        // Add Customer
+
+        // Add Customer Start
         app.post('/customers', async (req, res) => {
             const customer = req.body;
             const result = await customersCollection.insertOne(customer);
             res.send(result);
         })
-
+        // Add Customer End
 
 
 
