@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const port = process.env.PORT || 5000;
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 const cors = require('cors');
 require('dotenv').config();
@@ -38,6 +38,29 @@ async function run() {
             res.send(result);
         })
         // Add Customer End
+
+        // Update the Customer Start
+        app.put('/customer/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const customer = req.body;
+            const option = { upsert: true };
+            const updatedCustomer = {
+                $set: {
+                    name: customer.name,
+                    ip:customer.ip,
+                    mobile:customer.mobile,
+                    address:customer.address,
+                    mb:customer.mb,
+                    price:customer.price,
+                    connection_date:customer.connection_date
+                }
+            }
+            const result = await customersCollection.updateOne(filter, updatedCustomer, option);
+            res.send(result);
+            console.log(result);
+        });
+        // Update the Customer End
 
         // Show / Read Bills Start
         app.get('/bills', async (req, res) => {
